@@ -38,7 +38,24 @@ public class AuthService {
     
     
     
-    
+    public boolean registrarUser(User nuevo){
+        //Check if a user with this Id number exists:
+        User exists = userDAO.buscarPorCedula(nuevo.getCedula());
+        if(exists != null){
+            JOptionPane.showMessageDialog(null, "Usuario ya existente con el número de cédula:" + getClass(),
+                    "Erro", JOptionPane.ERROR_MESSAGE);
+            return false; //User exist
+        }
+        //Encrypts password before saving.
+        String passEnc = encriptar(nuevo.getContrasena());
+        nuevo.setContrasena(passEnc);
+        
+        //Saving in the file:
+        JOptionPane.showMessageDialog(null, "Usuario guardado exitosamente", "Operación Exitosa",
+                JOptionPane.INFORMATION_MESSAGE);
+        userDAO.saveUser(nuevo);
+        return true;
+    }
     
     
     
@@ -46,6 +63,7 @@ public class AuthService {
     
     
     //Encrypt the entered password(SHA-256):
+    //**************************************
     public String encriptar(String contr){
         try{
             MessageDigest md = MessageDigest.getInstance("SHA-256");
